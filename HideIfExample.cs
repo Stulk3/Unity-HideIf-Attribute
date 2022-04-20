@@ -1,4 +1,6 @@
- using System.Collections;
+#if UNITY_EDTITOR
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -44,3 +46,5 @@ public class Enemy : MonoBehaviour
         mage
     }
 }
+
+#endif
