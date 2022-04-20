@@ -20,6 +20,9 @@ public class Enemy : MonoBehaviour
     public float arrowDamage;
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.mage)]
     public float orbDamage;
+
+    [HideIfEnumValue("EnemyType",HideIf.Equal, (int) Type.warrior)]
+    public float projectileSpeed {get; private set;}
     
     public bool hideColliderSettings;
 
