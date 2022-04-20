@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour
     [HideIfNotNull("target")]
     [TextArea(1,2)] public string error = "Please, set enemy's target";
     public GameObject target;
+    [HideIfEnumValue("EnemyType", HideIf.NotEqual, (int) Type.warrior)]
     [HideIfNull("target")]
     float distanceToTarget;
     public CapsuleCollider enemyCollider;
