@@ -58,4 +58,4 @@ public float projectileSpeed {get; private set;}
 ## Installation
 You can just download repository and **move file to Unity Assets folder**. Installation is finished.
 ## Example
-I made a simple [HideIfExample.cs](https://github.com/Stulk3/Unity-HideIf-Attribute/blob/main/HideIfExample.cs) with a demonstration of all attribute features that will be not included in the final build, so you it's not necessary to delete.
+I made a simple [HideIfExample.cs](https://github.com/Stulk3/Unity-HideIf-Attribute/blob/main/HideIfExample.cs) with a demonstration of all attribute features that will be not included in the final build, so it's not necessary to delete.
