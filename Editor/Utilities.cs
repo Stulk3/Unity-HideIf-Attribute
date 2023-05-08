@@ -12,12 +12,16 @@ namespace HideIfUtilities
     {
         public static object GetTargetObjectOfProperty(SerializedProperty prop)
         {
-            var path = prop.propertyPath.Replace(".Array.data[" , "]");
+            var path = prop.propertyPath.Replace(".Array.data[" , "[");
             object targetObject = prop.serializedObject.targetObject;
             var elements = path.Split('.');
-            foreach(var element in elements)
+            
+            // The target object is the object that holds the serialized property, so if there are '.' we
+            // stop before the last element of the elements array
+            for (int i = 0; i < elements.Length - 1; i++)
             {
-                if(element.Contains("["))
+                var element = elements[i];
+                if (element.Contains("["))
                 {
                     var elementName = element.Substring(0, element.IndexOf("["));
                     var index = Convert.ToInt32(element.Substring(element.IndexOf("[")).Replace("[", "").Replace("]",""));
@@ -31,8 +35,6 @@ namespace HideIfUtilities
 
             return targetObject;
         }
-
-
 
         private static object GetValue_Imp(object source, string name)
         { 
@@ -79,8 +81,6 @@ namespace HideIfUtilities
             return value;
 
         }
-
-
     }
 }
 

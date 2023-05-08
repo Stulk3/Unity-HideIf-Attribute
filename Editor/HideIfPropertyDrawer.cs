@@ -13,14 +13,33 @@ public abstract class HidingAttributeDrawer : PropertyDrawer {
         try {
             bool shouldHide = false;
 
-            HidingAttribute[] attachedAttributes =
-                (HidingAttribute[])
-                property.serializedObject.targetObject.GetType()
-                        .GetField(property.name)
-                        .GetCustomAttributes(typeof (HidingAttribute), false);
+            var targetObject = Utilities.GetTargetObjectOfProperty(property);
+            var type = targetObject.GetType();
 
+            FieldInfo field;
+            do
+            {
+                field = type.GetField(property.name, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                type = type.BaseType;
+            } while (field == null && type != null);
+            
+            var customAttributes = field.GetCustomAttributes(typeof (HidingAttribute), false);
+            
+            // 'property' may be a property of a serialized class or collection inside the property.serializedObject.
+            // In that case we get the serialized property just above 'property' so the ShouldDraw method can test the
+            // HideIf attribute using FindPropertyRelative on the 'propertyParent'.
+            SerializedProperty propertyParent = null;
+            var propertyPath = property.propertyPath;
+            var lastDot = propertyPath.LastIndexOf('.');
+            if (lastDot > 0)
+            {
+                var parentPath = propertyPath.Substring(0, lastDot);
+                propertyParent = property.serializedObject.FindProperty(parentPath);
+            }
+            
+            HidingAttribute[] attachedAttributes = (HidingAttribute[]) customAttributes;
             foreach (var hider in attachedAttributes) {
-                if (!ShouldDraw(property.serializedObject, hider)) {
+                if (!ShouldDraw(property.serializedObject, propertyParent, hider)) {
                     shouldHide = true;
                 }
             }
@@ -103,25 +122,25 @@ public abstract class HidingAttributeDrawer : PropertyDrawer {
         }
     }
 
-    private static bool ShouldDraw(SerializedObject hidingobject, HidingAttribute hider) {
+    private static bool ShouldDraw(SerializedObject hidingobject, SerializedProperty serializedProperty, HidingAttribute hider) {
         var hideIf = hider as HideIfAttribute;
         if (hideIf != null) {
-            return HideIfAttributeDrawer.ShouldDraw(hidingobject, hideIf);
+            return HideIfAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIf);
         }
 
         var hideIfNull = hider as HideIfNullAttribute;
         if (hideIfNull != null) {
-            return HideIfNullAttributeDrawer.ShouldDraw(hidingobject, hideIfNull);
+            return HideIfNullAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIfNull);
         }
 
         var hideIfNotNull = hider as HideIfNotNullAttribute;
         if (hideIfNotNull != null) {
-            return HideIfNotNullAttributeDrawer.ShouldDraw(hidingobject, hideIfNotNull);
+            return HideIfNotNullAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIfNotNull);
         }
 
         var hideIfEnum = hider as HideIfEnumValueAttribute;
         if (hideIfEnum != null) {
-            return HideIfEnumValueAttributeDrawer.ShouldDraw(hidingobject, hideIfEnum);
+            return HideIfEnumValueAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIfEnum);
         }
 
         Debug.LogWarning("Trying to check unknown hider loadingType: " + hider.GetType().Name);
@@ -132,8 +151,8 @@ public abstract class HidingAttributeDrawer : PropertyDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfAttribute))]
 public class HideIfAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, HideIfAttribute attribute) {
-        var prop = hidingObject.FindProperty(attribute.variable);
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+        var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
         }
@@ -143,8 +162,8 @@ public class HideIfAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNullAttribute))]
 public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, HideIfNullAttribute hideIfNullAttribute) {
-        var prop = hidingObject.FindProperty(hideIfNullAttribute.variable);
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+        var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
         }
@@ -155,8 +174,8 @@ public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNotNullAttribute))]
 public class HideIfNotNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, HideIfNotNullAttribute hideIfNotNullAttribute) {
-        var prop = hidingObject.FindProperty(hideIfNotNullAttribute.variable);
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+        var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
         }
@@ -167,8 +186,8 @@ public class HideIfNotNullAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfEnumValueAttribute))]
 public class HideIfEnumValueAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, HideIfEnumValueAttribute hideIfEnumValueAttribute) {
-        var enumProp = hidingObject.FindProperty(hideIfEnumValueAttribute.variable);
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfEnumValueAttribute hideIfEnumValueAttribute) {
+        var enumProp = serializedProperty == null ? hidingObject.FindProperty(hideIfEnumValueAttribute.variable) : serializedProperty.FindPropertyRelative(hideIfEnumValueAttribute.variable);
         var states = hideIfEnumValueAttribute.states;
 
         //enumProp.enumValueIndex gives the order in the enum list, not the actual enum value
