@@ -72,11 +72,10 @@ public class HideIfScriptable : ScriptableObject
 ```
 ### ● **HideIf Attribute will hide any fields from parent classes**
 ```
-[public class ParentExample : MonoBehaviour
+public class ChildExample : ParentExample
 {
-    [SerializeField] private bool _isHidden;
-    [HideIf("_isHidden",true)]
-    [SerializeField] private int _age;
+    [HideIf("_isHidden", true)]
+    [SerializeField] private int _number;
 }
 ```
 ## Gratitudes
