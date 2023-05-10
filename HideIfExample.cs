@@ -1,4 +1,3 @@
-#if UNITY_EDTITOR
 
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using UnityEngine.AI;
 [SelectionBase]
 [RequireComponent(typeof(BoxCollider))]
 
-public class Enemy : MonoBehaviour
+public class HideIfExample : MonoBehaviour
 {
     [Space(5f)]
     [Header("General Settings")]
@@ -17,11 +16,11 @@ public class Enemy : MonoBehaviour
     public Type EnemyType;
 
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.warrior)]
-    public float swordDamage;
+    [SerializeField] private float _swordDamage;
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.archer)]
-    public float arrowDamage;
+    [SerializeField] private float _arrowDamage;
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.mage)]
-    public float orbDamage;
+    [SerializeField] private float _orbDamage;
 
     [HideIfEnumValue("EnemyType",HideIf.Equal, (int) Type.warrior)]
     public float projectileSpeed {get; private set;}
@@ -47,5 +46,3 @@ public class Enemy : MonoBehaviour
         mage
     }
 }
-
-#endif
