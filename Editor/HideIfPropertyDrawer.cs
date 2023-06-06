@@ -167,7 +167,7 @@ public class HideIfAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNullAttribute))]
 public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfNullAttribute attribute) {
         var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
@@ -179,7 +179,7 @@ public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNotNullAttribute))]
 public class HideIfNotNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfNotNullAttribute attribute) {
         var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
