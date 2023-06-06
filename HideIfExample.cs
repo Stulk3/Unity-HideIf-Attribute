@@ -10,9 +10,7 @@ public class HideIfExample : MonoBehaviour
     [Space(5f)]
     [Header("General Settings")]
     public float health = 100;
-    public int speed = 15;
-    [HideIfCompareValue("speed", HideIf.Greater, 10)]
-    public bool doubleJump;
+    public float speed = 15;
     public Type EnemyType;
 
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.warrior)]
@@ -38,6 +36,10 @@ public class HideIfExample : MonoBehaviour
     [HideIfNull("target")]
     float distanceToTarget;
     public CapsuleCollider enemyCollider;
+
+	public int attackComboCount = 1;
+    [HideIfCompareValue("attackComboCount", HideIf.Lower, 2)]
+    public float timeBetweenAttacks = 1;
 
     public enum Type : int
     {
