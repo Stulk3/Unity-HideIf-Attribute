@@ -55,7 +55,32 @@ public float radius;
 [HideIfEnumValue("EnemyType",HideIf.Equal, (int) Type.warrior)]
 public float projectileSpeed {get; private set;}
 ```
+### ● **HideIf Attribute affects on serialized private Field**
+```
+[HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.warrior)]
+[SerializeField] private float _swordDamage;
+```
+### ● **HideIf Attribute hides fields even in ScriptableObjects and other custom serialized classes**
+```
+public class HideIfScriptable : ScriptableObject
+{
+    public bool isHidden;
+
+    [HideIf("isHidden", true)]
+    public int data;
+}
+```
+### ● **HideIf Attribute will hide any fields from parent classes**
+```
+public class ChildExample : ParentExample
+{
+    [HideIf("_isHidden", true)]
+    [SerializeField] private int _number;
+}
+```
+## Gratitudes
+[Guidanel](https://github.com/Guidanel) - huge thanks for last three features. This user's support made this asset even more flexible and convenient. 
 ## Installation
 You can just download repository and **move file to Unity Assets folder**. Installation is finished.
 ## Example
-I made a simple [HideIfExample.cs](https://github.com/Stulk3/Unity-HideIf-Attribute/blob/main/HideIfExample.cs) with a demonstration of all attribute features that will be not included in the final build, so it's not necessary to delete.
+I made a simple [HideIfExample.cs](https://github.com/Stulk3/Unity-HideIf-Attribute/blob/main/HideIfExample.cs) with a demonstration of all attributes. 

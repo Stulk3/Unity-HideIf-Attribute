@@ -16,11 +16,11 @@ public class HideIfExample : MonoBehaviour
     public Type EnemyType;
 
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.warrior)]
-    public float swordDamage;
+    [SerializeField] private float _swordDamage;
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.archer)]
-    public float arrowDamage;
+    [SerializeField] private float _arrowDamage;
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.mage)]
-    public float orbDamage;
+    [SerializeField] private float _orbDamage;
 
     [HideIfEnumValue("EnemyType",HideIf.Equal, (int) Type.warrior)]
     public float projectileSpeed {get; private set;}
