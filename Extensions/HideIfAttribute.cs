@@ -18,6 +18,7 @@ public class HideIfAttribute: HidingAttribute
         this.order = order;
     }
 }
+
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
 public class HideIfNullAttribute: HidingAttribute 
 {
@@ -29,6 +30,7 @@ public class HideIfNullAttribute: HidingAttribute
         this.order = order;
     }
 }
+
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
 public class HideIfNotNullAttribute : HidingAttribute
 {
@@ -39,6 +41,7 @@ public class HideIfNotNullAttribute : HidingAttribute
         this.order = order;
     }
 }
+
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
 public class HideIfEnumValueAttribute : HidingAttribute
 {
@@ -53,10 +56,28 @@ public class HideIfEnumValueAttribute : HidingAttribute
         this.states = states;  
         this.order = -1;
     }
-
 }
+
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
+public class HideIfCompareValueAttribute : HidingAttribute
+{
+    public readonly string variable;
+    public readonly HideIf hideIf;
+    public readonly int value;
+    
+    public HideIfCompareValueAttribute(string variable, HideIf hideIf, int value)
+    {
+        this.variable = variable;
+        this.hideIf = hideIf;
+        this.value = value;  
+        this.order = -1;
+    }
+}
+
 public enum HideIf
 {
     Equal,
-    NotEqual
+    NotEqual,
+    Greater,
+    Lower
 }

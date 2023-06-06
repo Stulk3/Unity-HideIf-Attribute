@@ -1,19 +1,18 @@
-#if UNITY_EDTITOR
+#if UNITY_EDITOR
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 [SelectionBase]
 [RequireComponent(typeof(BoxCollider))]
 
-public class Enemy : MonoBehaviour
+public class HideIfExample : MonoBehaviour
 {
     [Space(5f)]
     [Header("General Settings")]
     public float health = 100;
-    public float speed = 15;
+    public int speed = 15;
+    [HideIfCompareValue("speed", HideIf.Greater, 10)]
+    public bool doubleJump;
     public Type EnemyType;
 
     [HideIfEnumValue("EnemyType",HideIf.NotEqual, (int) Type.warrior)]
