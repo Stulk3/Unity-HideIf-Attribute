@@ -1,5 +1,3 @@
-#if UNITY_EDITOR
-
 using UnityEngine;
 
 [SelectionBase]
@@ -48,5 +46,3 @@ public class HideIfExample : MonoBehaviour
         mage
     }
 }
-
-#endif
