@@ -143,6 +143,11 @@ public abstract class HidingAttributeDrawer : PropertyDrawer {
             return HideIfEnumValueAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIfEnum);
         }
 
+        var hideIfCompare = hider as HideIfCompareValueAttribute;
+        if (hideIfCompare != null) {
+            return HideIfCompareValueAttributeDrawer.ShouldDraw(hidingobject, serializedProperty, hideIfCompare);
+        }
+
         Debug.LogWarning("Trying to check unknown hider loadingType: " + hider.GetType().Name);
         return false;
     }
@@ -162,7 +167,7 @@ public class HideIfAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNullAttribute))]
 public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfNullAttribute attribute) {
         var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
@@ -174,7 +179,7 @@ public class HideIfNullAttributeDrawer : HidingAttributeDrawer {
 
 [CustomPropertyDrawer(typeof (HideIfNotNullAttribute))]
 public class HideIfNotNullAttributeDrawer : HidingAttributeDrawer {
-    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfAttribute attribute) {
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfNotNullAttribute attribute) {
         var prop = serializedProperty == null ? hidingObject.FindProperty(attribute.variable) : serializedProperty.FindPropertyRelative(attribute.variable);
         if (prop == null) {
             return true;
@@ -194,5 +199,21 @@ public class HideIfEnumValueAttributeDrawer : HidingAttributeDrawer {
         bool equal = states.Contains(enumProp.intValue);
 
         return equal != hideIfEnumValueAttribute.hideIfEqual;
+    }
+}
+
+[CustomPropertyDrawer(typeof (HideIfCompareValueAttribute))]
+public class HideIfCompareValueAttributeDrawer : HidingAttributeDrawer {
+    public static bool ShouldDraw(SerializedObject hidingObject, SerializedProperty serializedProperty, HideIfCompareValueAttribute hideIfCompareValueAttribute) {
+        var variable = serializedProperty == null ? hidingObject.FindProperty(hideIfCompareValueAttribute.variable) : serializedProperty.FindPropertyRelative(hideIfCompareValueAttribute.variable);
+        var compareValue = hideIfCompareValueAttribute.value;
+        
+        switch (hideIfCompareValueAttribute.hideIf)
+        {
+            case HideIf.Equal: return variable.intValue != compareValue;
+            case HideIf.NotEqual: return variable.intValue == compareValue;
+            case HideIf.Greater: return variable.intValue <= compareValue;
+            default: /*case HideIf.Lower:*/ return variable.intValue >= compareValue;
+        }
     }
 }

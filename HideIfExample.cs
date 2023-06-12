@@ -1,8 +1,4 @@
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 [SelectionBase]
 [RequireComponent(typeof(BoxCollider))]
@@ -38,6 +34,10 @@ public class HideIfExample : MonoBehaviour
     [HideIfNull("target")]
     float distanceToTarget;
     public CapsuleCollider enemyCollider;
+
+	public int attackComboCount = 1;
+    [HideIfCompareValue("attackComboCount", HideIf.Lower, 2)]
+    public float timeBetweenAttacks = 1;
 
     public enum Type : int
     {
